@@ -59,6 +59,10 @@ export interface Problem {
   verifiedAt?: string;
   createdAt: string;
   isOffline?: boolean;
+  outletType?: string;
+  outletStatus?: string;
+  constructionProject?: string;
+  constructionHasApproval?: string;
 }
 
 export type ProblemType = 

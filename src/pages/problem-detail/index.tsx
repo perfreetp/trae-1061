@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { View, Text, ScrollView, Button, Image, Textarea } from '@tarojs/components'
-import Taro, { useRouter } from '@tarojs/taro'
+import Taro, { useRouter, useDidShow } from '@tarojs/taro'
 import type { Problem } from '../../types'
-import { mockProblems, problemTypeMap, statusMap } from '../../utils/mock'
+import { problemTypeMap, statusMap } from '../../utils/mock'
 import { previewImage, chooseImage } from '../../utils/media'
 import { openLocation } from '../../utils/location'
+import { problemStore } from '../../utils/store'
 import './index.scss'
 
 export default function ProblemDetail() {
@@ -15,11 +16,19 @@ export default function ProblemDetail() {
   const [rectifyDesc, setRectifyDesc] = useState('')
   const [rectifyImages, setRectifyImages] = useState<string[]>([])
 
-  useEffect(() => {
-    const found = mockProblems.find(p => p.id === problemId)
+  const loadData = () => {
+    const found = problemStore.getById(problemId!)
     if (found) {
       setProblem(found)
     }
+  }
+
+  useDidShow(() => {
+    loadData()
+  })
+
+  useEffect(() => {
+    loadData()
   }, [problemId])
 
   const isOverdue = (deadline?: string) => {
@@ -50,15 +59,23 @@ export default function ProblemDetail() {
     setTimeout(() => {
       Taro.hideLoading()
       if (problem) {
-        setProblem({
-          ...problem,
-          status: 'completed',
-          rectifyDescription: rectifyDesc,
-          rectifyImages,
-        })
+        problemStore.submitRectify(problem.id, rectifyDesc, rectifyImages)
+        loadData()
       }
       Taro.showToast({ title: '整改已提交', icon: 'success' })
     }, 1000)
+  }
+
+  const handleAssign = () => {
+    Taro.showActionSheet({
+      itemList: ['派单给李巡查', '派单给王保洁', '派单给赵执法'],
+      success: (res) => {
+        const names = ['李巡查', '王保洁', '赵执法']
+        problemStore.assignProblem(problem!.id, names[res.tapIndex])
+        loadData()
+        Taro.showToast({ title: '派单成功', icon: 'success' })
+      },
+    })
   }
 
   const handleVerify = () => {
@@ -67,11 +84,8 @@ export default function ProblemDetail() {
       content: '确认问题已整改合格？',
       success: (res) => {
         if (res.confirm && problem) {
-          setProblem({
-            ...problem,
-            status: 'verified',
-            verifiedAt: new Date().toISOString(),
-          })
+          problemStore.verifyProblem(problem.id)
+          loadData()
           Taro.showToast({ title: '复查通过', icon: 'success' })
         }
       },
@@ -125,6 +139,64 @@ export default function ProblemDetail() {
           </View>
         )}
       </View>
+
+      {problem.type === 'outlet' && (problem.outletType || problem.outletStatus) && (
+        <View className='info-section'>
+          <Text className='section-title'>排口信息</Text>
+          {problem.outletType && (
+            <View className='info-row'>
+              <Text className='info-label'>排口类型</Text>
+              <Text className='info-value'>{problem.outletType}</Text>
+            </View>
+          )}
+          {problem.outletStatus && (
+            <View className='info-row'>
+              <Text className='info-label'>异常情况</Text>
+              <Text className='info-value'>{problem.outletStatus === 'normal' ? '正常排水' : '异常排水'}</Text>
+            </View>
+          )}
+        </View>
+      )}
+
+      {problem.type === 'construction' && (problem.constructionProject || problem.constructionHasApproval) && (
+        <View className='info-section'>
+          <Text className='section-title'>施工信息</Text>
+          {problem.constructionProject && (
+            <View className='info-row'>
+              <Text className='info-label'>项目名称</Text>
+              <Text className='info-value'>{problem.constructionProject}</Text>
+            </View>
+          )}
+          {problem.constructionHasApproval && (
+            <View className='info-row'>
+              <Text className='info-label'>审批情况</Text>
+              <Text className='info-value'>{problem.constructionHasApproval === 'yes' ? '有审批' : '无审批'}</Text>
+            </View>
+          )}
+        </View>
+      )}
+
+      {problem.videos && problem.videos.length > 0 && (
+        <View className='info-section'>
+          <Text className='section-title'>视频证据</Text>
+          <View className='video-preview'>
+            <View className='video-thumbnail'>
+              <Text className='play-icon'>▶️</Text>
+            </View>
+            <Text className='video-name'>视频文件</Text>
+          </View>
+        </View>
+      )}
+
+      {problem.voiceNote && (
+        <View className='info-section'>
+          <Text className='section-title'>语音备注</Text>
+          <View className='voice-player'>
+            <Text className='play-icon'>▶️</Text>
+            <Text className='voice-text'>点击播放语音备注</Text>
+          </View>
+        </View>
+      )}
 
       <View className='info-section'>
         <Text className='section-title'>位置信息</Text>
@@ -218,14 +290,7 @@ export default function ProblemDetail() {
           <View className='action-row'>
             <Button 
               className='action-btn primary'
-              onClick={() => {
-                Taro.showActionSheet({
-                  itemList: ['派单给李巡查', '派单给王保洁', '派单给赵执法'],
-                  success: () => {
-                    Taro.showToast({ title: '派单成功', icon: 'success' })
-                  },
-                })
-              }}
+              onClick={handleAssign}
             >
               派发整改
             </Button>

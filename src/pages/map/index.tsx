@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { View, Text, Button, Map } from '@tarojs/components'
-import Taro, { useRouter } from '@tarojs/taro'
+import Taro, { useRouter, useDidShow } from '@tarojs/taro'
 import type { Checkpoint } from '../../types'
 import { getCurrentLocation, checkInRadius, calculateTotalDistance, openLocation } from '../../utils/location'
-import { mockTasks } from '../../utils/mock'
+import { taskStore } from '../../utils/store'
 import './index.scss'
 
 export default function PatrolMap() {
@@ -19,15 +19,19 @@ export default function PatrolMap() {
   const [nearbyCheckpoint, setNearbyCheckpoint] = useState<Checkpoint | null>(null)
   const mapRef = useRef<any>(null)
 
-  useEffect(() => {
+  const loadData = () => {
     if (taskId) {
-      const task = mockTasks.find(t => t.id === taskId)
+      const task = taskStore.getById(taskId)
       if (task) {
         setCheckpoints(task.checkpoints)
       }
     }
+  }
+
+  useDidShow(() => {
+    loadData()
     initLocation()
-  }, [taskId])
+  })
 
   const initLocation = async () => {
     try {
@@ -52,6 +56,12 @@ export default function PatrolMap() {
       success: (res) => {
         if (res.confirm) {
           setPatrolling(false)
+          if (taskId) {
+            const allChecked = checkpoints.every(cp => cp.checked)
+            if (allChecked) {
+              taskStore.update(taskId, { status: 'completed' })
+            }
+          }
           Taro.showToast({ title: '巡河结束', icon: 'success' })
         }
       },
@@ -84,11 +94,15 @@ export default function PatrolMap() {
 
   const handleCheckin = () => {
     if (!nearbyCheckpoint) return
-    setCheckpoints(prev => prev.map(cp => 
+    const updatedCheckpoints = checkpoints.map(cp => 
       cp.id === nearbyCheckpoint.id 
         ? { ...cp, checked: true, checkedAt: new Date().toLocaleString() }
         : cp
-    ))
+    )
+    setCheckpoints(updatedCheckpoints)
+    if (taskId) {
+      taskStore.checkCheckpoint(taskId, nearbyCheckpoint.id)
+    }
     setShowCheckinModal(false)
     Taro.vibrateShort()
     Taro.showToast({ title: '打卡成功', icon: 'success' })
@@ -158,7 +172,7 @@ export default function PatrolMap() {
           <View className='info-item'>
             <Text className='info-label'>用时</Text>
             <Text className='info-value'>
-              {startTime ? (Date.now() - new Date(startTime).getTime()) / 1000 / 60 | 0 : 0} min
+              {startTime ? Math.floor((Date.now() - new Date(startTime).getTime()) / 1000 / 60) : 0} min
             </Text>
           </View>
         </View>

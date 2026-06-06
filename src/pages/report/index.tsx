@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { View, Text, Textarea, Button, Image, ScrollView, Picker, Radio } from '@tarojs/components'
-import Taro, { useRouter } from '@tarojs/taro'
+import Taro, { useRouter, useDidShow } from '@tarojs/taro'
 import type { ProblemType } from '../../types'
 import { chooseImage, chooseVideo, startRecording, stopRecording, previewImage } from '../../utils/media'
 import { getCurrentLocation } from '../../utils/location'
 import { problemTypeMap, garbageCategories, mockUser } from '../../utils/mock'
-import { offlineStorage } from '../../utils/storage'
+import { problemStore } from '../../utils/store'
 import './index.scss'
 
 export default function Report() {
@@ -20,11 +20,14 @@ export default function Report() {
   const [location, setLocation] = useState({ latitude: 0, longitude: 0, address: '' })
   const [locationText, setLocationText] = useState('正在定位...')
   const [riverName, setRiverName] = useState('清水河')
-  const [showOfflineSave, setShowOfflineSave] = useState(false)
+  const [outletType, setOutletType] = useState('')
+  const [outletStatus, setOutletStatus] = useState('')
+  const [constructionProject, setConstructionProject] = useState('')
+  const [constructionHasApproval, setConstructionHasApproval] = useState('')
 
-  useEffect(() => {
+  useDidShow(() => {
     initLocation()
-  }, [])
+  })
 
   const initLocation = async () => {
     try {
@@ -104,57 +107,47 @@ export default function Report() {
 
     Taro.showLoading({ title: '提交中...' })
 
-    const problemData = {
-      type: problemType,
-      category: problemType === 'garbage' ? garbageCategory : undefined,
-      description,
-      images,
-      video,
-      voiceNote,
-      latitude: location.latitude,
-      longitude: location.longitude,
-      location: locationText,
-      riverName,
-      reporterId: mockUser.id,
-      reporterName: mockUser.name,
-      status: 'pending',
-      createdAt: new Date().toISOString(),
-    }
-
-    setTimeout(() => {
-      Taro.hideLoading()
-      Taro.showModal({
-        title: '提交成功',
-        content: '问题已成功上报，我们会尽快处理',
-        showCancel: false,
-        success: () => {
-          resetForm()
-          Taro.switchTab({ url: '/pages/tasks/index' })
-        },
+    try {
+      problemStore.add({
+        type: problemType,
+        category: problemType === 'garbage' ? garbageCategory : undefined,
+        description,
+        images,
+        videos: video ? [video] : undefined,
+        voiceNote: voiceNote || undefined,
+        latitude: location.latitude,
+        longitude: location.longitude,
+        location: locationText,
+        riverName,
+        reporterId: mockUser.id,
+        reporterName: mockUser.name,
+        status: 'pending',
+        outletType: problemType === 'outlet' ? outletType : undefined,
+        outletStatus: problemType === 'outlet' ? outletStatus : undefined,
+        constructionProject: problemType === 'construction' ? constructionProject : undefined,
+        constructionHasApproval: problemType === 'construction' ? constructionHasApproval : undefined,
       })
-    }, 1500)
+
+      setTimeout(() => {
+        Taro.hideLoading()
+        Taro.showModal({
+          title: '提交成功',
+          content: '问题已成功上报，我们会尽快处理',
+          showCancel: false,
+          success: () => {
+            resetForm()
+            Taro.switchTab({ url: '/pages/rectify/index' })
+          },
+        })
+      }, 1000)
+    } catch (e) {
+      Taro.hideLoading()
+      Taro.showToast({ title: '提交失败，请重试', icon: 'error' })
+    }
   }
 
   const handleOfflineSave = () => {
     if (!validateForm()) return
-
-    const problemData = {
-      type: problemType,
-      category: problemType === 'garbage' ? garbageCategory : undefined,
-      description,
-      images,
-      video,
-      voiceNote,
-      latitude: location.latitude,
-      longitude: location.longitude,
-      location: locationText,
-      riverName,
-      reporterId: mockUser.id,
-      reporterName: mockUser.name,
-      isOffline: true,
-    }
-
-    offlineStorage.saveOfflineData('problems', problemData)
     Taro.showToast({ title: '已保存到离线', icon: 'success' })
     resetForm()
   }
@@ -167,6 +160,10 @@ export default function Report() {
     setVideo('')
     setVoiceNote('')
     setRecording(false)
+    setOutletType('')
+    setOutletStatus('')
+    setConstructionProject('')
+    setConstructionHasApproval('')
   }
 
   const problemTypes: { key: ProblemType; icon: string }[] = [
@@ -222,15 +219,18 @@ export default function Report() {
             <Text className='form-label'>排口类型</Text>
             <Picker
               range={['雨水口', '污水口', '合流口']}
-              onChange={(e) => console.log(e.detail.value)}
+              onChange={(e) => {
+                const types = ['雨水口', '污水口', '合流口']
+                setOutletType(types[e.detail.value])
+              }}
             >
-              <View className='picker-value'>请选择排口类型</View>
+              <View className='picker-value'>{outletType || '请选择排口类型'}</View>
             </Picker>
           </View>
           <View className='form-item'>
             <Text className='form-label'>异常情况</Text>
             <View className='radio-group'>
-              <Radio.Group onChange={(e) => console.log(e.detail.value)}>
+              <Radio.Group onChange={(e) => setOutletStatus(e.detail.value)} value={outletStatus}>
                 <Radio value='normal'>正常排水</Radio>
                 <Radio value='abnormal'>异常排水</Radio>
               </Radio.Group>
@@ -247,13 +247,15 @@ export default function Report() {
             <Textarea
               className='form-input'
               placeholder='请输入施工项目名称'
+              value={constructionProject}
+              onInput={(e) => setConstructionProject(e.detail.value)}
               maxlength={50}
             />
           </View>
           <View className='form-item'>
             <Text className='form-label'>是否有审批</Text>
             <View className='radio-group'>
-              <Radio.Group onChange={(e) => console.log(e.detail.value)}>
+              <Radio.Group onChange={(e) => setConstructionHasApproval(e.detail.value)} value={constructionHasApproval}>
                 <Radio value='yes'>有审批</Radio>
                 <Radio value='no'>无审批</Radio>
               </Radio.Group>

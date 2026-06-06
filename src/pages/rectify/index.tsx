@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { View, Text, ScrollView, Image, Button } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import type { Problem } from '../../types'
-import { mockProblems, problemTypeMap, statusMap } from '../../utils/mock'
+import { problemTypeMap, statusMap } from '../../utils/mock'
+import { problemStore } from '../../utils/store'
 import './index.scss'
 
 export default function Rectify() {
@@ -10,7 +11,7 @@ export default function Rectify() {
   const [activeTab, setActiveTab] = useState('all')
 
   useDidShow(() => {
-    setProblems(mockProblems)
+    setProblems(problemStore.getAll())
   })
 
   const tabs = [
@@ -50,12 +51,8 @@ export default function Rectify() {
       itemList: ['派单给李巡查', '派单给王保洁', '派单给赵执法'],
       success: (res) => {
         const names = ['李巡查', '王保洁', '赵执法']
-        const updated = problems.map(p =>
-          p.id === problem.id
-            ? { ...p, status: 'assigned' as const, assigneeName: names[res.tapIndex] }
-            : p
-        )
-        setProblems(updated)
+        problemStore.assignProblem(problem.id, names[res.tapIndex])
+        setProblems(problemStore.getAll())
         Taro.showToast({ title: '派单成功', icon: 'success' })
       },
     })
@@ -67,12 +64,8 @@ export default function Rectify() {
       content: '确认问题已整改合格？',
       success: (res) => {
         if (res.confirm) {
-          const updated = problems.map(p =>
-            p.id === problem.id
-              ? { ...p, status: 'verified' as const, verifiedAt: new Date().toISOString() }
-              : p
-          )
-          setProblems(updated)
+          problemStore.verifyProblem(problem.id)
+          setProblems(problemStore.getAll())
           Taro.showToast({ title: '复查通过', icon: 'success' })
         }
       },
@@ -87,7 +80,7 @@ export default function Rectify() {
           <Text className='stat-label'>待处理</Text>
         </View>
         <View className='stat-item'>
-          <Text className='stat-number'>{problems.filter(p => p.status === 'rectifying').length}</Text>
+          <Text className='stat-number'>{problems.filter(p => p.status === 'rectifying' || p.status === 'assigned').length}</Text>
           <Text className='stat-label'>整改中</Text>
         </View>
         <View className='stat-item'>
@@ -138,11 +131,13 @@ export default function Rectify() {
 
               <Text className='problem-desc'>{problem.description}</Text>
 
-              <View className='problem-images'>
-                {problem.images.slice(0, 3).map((img, idx) => (
-                  <Image key={idx} src={img} className='thumb-image' mode='aspectFill' />
-                ))}
-              </View>
+              {problem.images.length > 0 && (
+                <View className='problem-images'>
+                  {problem.images.slice(0, 3).map((img, idx) => (
+                    <Image key={idx} src={img} className='thumb-image' mode='aspectFill' />
+                  ))}
+                </View>
+              )}
 
               <View className='problem-meta'>
                 <View className='meta-row'>

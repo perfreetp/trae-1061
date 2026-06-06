@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { View, Text, ScrollView, Button, Textarea, Picker } from '@tarojs/components'
-import Taro, { useRouter } from '@tarojs/taro'
+import Taro, { useRouter, useDidShow } from '@tarojs/taro'
 import type { Task } from '../../types'
-import { mockTasks } from '../../utils/mock'
+import { taskStore } from '../../utils/store'
 import './index.scss'
 
 export default function TaskDetail() {
@@ -13,12 +13,16 @@ export default function TaskDetail() {
   const [delayReason, setDelayReason] = useState('')
   const [delayDays, setDelayDays] = useState('1')
 
-  useEffect(() => {
-    const found = mockTasks.find(t => t.id === taskId)
+  const loadData = () => {
+    const found = taskStore.getById(taskId!)
     if (found) {
       setTask(found)
     }
-  }, [taskId])
+  }
+
+  useDidShow(() => {
+    loadData()
+  })
 
   const getStatusConfig = (status: string) => {
     const configs: Record<string, { label: string; color: string }> = {
@@ -40,6 +44,14 @@ export default function TaskDetail() {
     Taro.showLoading({ title: '提交中...' })
     setTimeout(() => {
       Taro.hideLoading()
+      if (task) {
+        taskStore.update(task.id, {
+          delayApplied: true,
+          delayReason,
+          delayApproved: false,
+        })
+        loadData()
+      }
       Taro.showToast({ title: '延期申请已提交', icon: 'success' })
     }, 1000)
   }
@@ -149,6 +161,8 @@ export default function TaskDetail() {
             <Button 
               className='action-btn primary'
               onClick={() => {
+                taskStore.startTask(task.id)
+                loadData()
                 Taro.showToast({ title: '任务已开始', icon: 'success' })
               }}
             >

@@ -2,15 +2,19 @@ import { useState } from 'react'
 import { View, Text, ScrollView, Button } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import type { Notification } from '../../types'
-import { mockNotifications } from '../../utils/mock'
+import { notificationStore } from '../../utils/store'
 import './index.scss'
 
 export default function Notifications() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [activeTab, setActiveTab] = useState('all')
 
+  const loadData = () => {
+    setNotifications(notificationStore.getAll())
+  }
+
   useDidShow(() => {
-    setNotifications(mockNotifications)
+    loadData()
   })
 
   const tabs = [
@@ -38,13 +42,13 @@ export default function Notifications() {
   }
 
   const handleRead = (id: string) => {
-    setNotifications(prev => prev.map(n => 
-      n.id === id ? { ...n, read: true } : n
-    ))
+    notificationStore.markAsRead(id)
+    loadData()
   }
 
   const handleMarkAllRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+    notificationStore.markAllAsRead()
+    loadData()
     Taro.showToast({ title: '已全部标为已读', icon: 'success' })
   }
 

@@ -1,25 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { View, Text, ScrollView, Button } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import type { Task } from '../../types'
-import { mockTasks } from '../../utils/mock'
+import { taskStore } from '../../utils/store'
 import './index.scss'
 
 export default function Tasks() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [activeTab, setActiveTab] = useState<string>('all')
 
-  useEffect(() => {
-    loadTasks()
-  }, [])
+  const loadData = () => {
+    setTasks(taskStore.getAll())
+  }
 
   useDidShow(() => {
-    loadTasks()
+    loadData()
   })
-
-  const loadTasks = () => {
-    setTasks(mockTasks)
-  }
 
   const getStatusConfig = (status: string) => {
     const configs: Record<string, { label: string; color: string; className: string }> = {
@@ -49,6 +45,12 @@ export default function Tasks() {
     Taro.navigateTo({
       url: `/pages/task-detail/index?id=${task.id}`,
     })
+  }
+
+  const handleStartTask = (task: Task) => {
+    taskStore.startTask(task.id)
+    loadData()
+    Taro.showToast({ title: '任务已开始', icon: 'success' })
   }
 
   const tabs = [
@@ -151,7 +153,7 @@ export default function Tasks() {
                     className='action-btn outline'
                     onClick={(e) => {
                       e.stopPropagation()
-                      Taro.navigateTo({ url: `/pages/task-detail/index?id=${task.id}` })
+                      goToDetail(task)
                     }}
                   >
                     查看详情
@@ -165,11 +167,7 @@ export default function Tasks() {
                     className='action-btn primary'
                     onClick={(e) => {
                       e.stopPropagation()
-                      const updated = tasks.map(t => 
-                        t.id === task.id ? { ...t, status: 'inProgress' as const } : t
-                      )
-                      setTasks(updated)
-                      Taro.showToast({ title: '任务已开始', icon: 'success' })
+                      handleStartTask(task)
                     }}
                   >
                     开始任务

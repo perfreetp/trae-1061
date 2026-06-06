@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { View, Text, ScrollView, Image, Button, Textarea, Picker } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import type { WaterQualityRecord } from '../../types'
-import { mockWaterQualityRecords, mockUser } from '../../utils/mock'
+import { mockUser } from '../../utils/mock'
 import { chooseImage, previewImage } from '../../utils/media'
-import { getCurrentLocation } from '../../utils/location'
+import { waterQualityStore } from '../../utils/store'
 import './index.scss'
 
 export default function WaterQuality() {
@@ -26,8 +26,12 @@ export default function WaterQuality() {
     images: [] as string[],
   })
 
+  const loadData = () => {
+    setRecords(waterQualityStore.getAll())
+  }
+
   useDidShow(() => {
-    setRecords(mockWaterQualityRecords)
+    loadData()
   })
 
   const handleChooseImage = async () => {
@@ -42,23 +46,34 @@ export default function WaterQuality() {
   const handleSubmit = () => {
     Taro.showLoading({ title: '提交中...' })
     setTimeout(() => {
-      const newRecord: WaterQualityRecord = {
-        id: Date.now().toString(),
-        ...formData,
-        temperature: parseFloat(formData.temperature) || undefined,
-        pH: parseFloat(formData.pH) || undefined,
-        dissolvedOxygen: parseFloat(formData.dissolvedOxygen) || undefined,
-        ammoniaNitrogen: parseFloat(formData.ammoniaNitrogen) || undefined,
-        latitude: 31.2304,
-        longitude: 121.4737,
-        recorderId: mockUser.id,
-        recorderName: mockUser.name,
-        createdAt: new Date().toLocaleString(),
+      try {
+        waterQualityStore.add({
+          riverName: formData.riverName,
+          location: formData.location,
+          temperature: parseFloat(formData.temperature) || undefined,
+          pH: parseFloat(formData.pH) || undefined,
+          turbidity: formData.turbidity,
+          color: formData.color,
+          odor: formData.odor,
+          floatingObjects: formData.floatingObjects,
+          oilFilm: formData.oilFilm,
+          dissolvedOxygen: parseFloat(formData.dissolvedOxygen) || undefined,
+          ammoniaNitrogen: parseFloat(formData.ammoniaNitrogen) || undefined,
+          description: formData.description,
+          images: formData.images,
+          latitude: 31.2304,
+          longitude: 121.4737,
+          recorderId: mockUser.id,
+          recorderName: mockUser.name,
+        })
+        loadData()
+        setShowAddForm(false)
+        Taro.hideLoading()
+        Taro.showToast({ title: '记录成功', icon: 'success' })
+      } catch (e) {
+        Taro.hideLoading()
+        Taro.showToast({ title: '记录失败', icon: 'error' })
       }
-      setRecords(prev => [newRecord, ...prev])
-      setShowAddForm(false)
-      Taro.hideLoading()
-      Taro.showToast({ title: '记录成功', icon: 'success' })
     }, 1000)
   }
 
