@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
-import { View, Text, Textarea, Button, Image, ScrollView, Picker, Radio } from '@tarojs/components'
-import Taro, { useRouter, useDidShow } from '@tarojs/taro'
+import { useState } from 'react'
+import { View, Text, Textarea, Button, Image, ScrollView, Picker } from '@tarojs/components'
+import Taro, { useDidShow } from '@tarojs/taro'
 import type { ProblemType } from '../../types'
 import { chooseImage, chooseVideo, startRecording, stopRecording, previewImage } from '../../utils/media'
 import { getCurrentLocation } from '../../utils/location'
@@ -9,7 +9,6 @@ import { problemStore } from '../../utils/store'
 import './index.scss'
 
 export default function Report() {
-  const router = useRouter()
   const [problemType, setProblemType] = useState<ProblemType>('garbage')
   const [garbageCategory, setGarbageCategory] = useState('')
   const [description, setDescription] = useState('')
@@ -176,6 +175,16 @@ export default function Report() {
     { key: 'other', icon: '📋' },
   ]
 
+  const outletStatusOptions = [
+    { value: 'normal', label: '正常排水' },
+    { value: 'abnormal', label: '异常排水' },
+  ]
+
+  const approvalOptions = [
+    { value: 'yes', label: '有审批' },
+    { value: 'no', label: '无审批' },
+  ]
+
   return (
     <ScrollView className='report-page' scrollY>
       <View className='section'>
@@ -229,11 +238,19 @@ export default function Report() {
           </View>
           <View className='form-item'>
             <Text className='form-label'>异常情况</Text>
-            <View className='radio-group'>
-              <Radio.Group onChange={(e) => setOutletStatus(e.detail.value)} value={outletStatus}>
-                <Radio value='normal'>正常排水</Radio>
-                <Radio value='abnormal'>异常排水</Radio>
-              </Radio.Group>
+            <View className='custom-radio-group'>
+              {outletStatusOptions.map(opt => (
+                <View
+                  key={opt.value}
+                  className={`custom-radio-item ${outletStatus === opt.value ? 'radio-checked' : ''}`}
+                  onClick={() => setOutletStatus(opt.value)}
+                >
+                  <View className='radio-icon'>
+                    {outletStatus === opt.value && <Text className='radio-check'>✓</Text>}
+                  </View>
+                  <Text className='radio-label'>{opt.label}</Text>
+                </View>
+              ))}
             </View>
           </View>
         </View>
@@ -254,11 +271,19 @@ export default function Report() {
           </View>
           <View className='form-item'>
             <Text className='form-label'>是否有审批</Text>
-            <View className='radio-group'>
-              <Radio.Group onChange={(e) => setConstructionHasApproval(e.detail.value)} value={constructionHasApproval}>
-                <Radio value='yes'>有审批</Radio>
-                <Radio value='no'>无审批</Radio>
-              </Radio.Group>
+            <View className='custom-radio-group'>
+              {approvalOptions.map(opt => (
+                <View
+                  key={opt.value}
+                  className={`custom-radio-item ${constructionHasApproval === opt.value ? 'radio-checked' : ''}`}
+                  onClick={() => setConstructionHasApproval(opt.value)}
+                >
+                  <View className='radio-icon'>
+                    {constructionHasApproval === opt.value && <Text className='radio-check'>✓</Text>}
+                  </View>
+                  <Text className='radio-label'>{opt.label}</Text>
+                </View>
+              ))}
             </View>
           </View>
         </View>

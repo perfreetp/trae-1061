@@ -125,7 +125,7 @@ export default function ProblemDetail() {
         <Text className='section-title'>问题描述</Text>
         <Text className='description-text'>{problem.description}</Text>
         
-        {problem.images.length > 0 && (
+        {problem.images && problem.images.length > 0 && (
           <View className='image-list'>
             {problem.images.map((img, idx) => (
               <Image

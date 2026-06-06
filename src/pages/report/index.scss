@@ -345,6 +345,52 @@
   margin-top: 32px;
 }
 
+.custom-radio-group {
+  display: flex;
+  gap: 32px;
+}
+
+.custom-radio-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  border: 2px solid $border-color;
+  border-radius: $radius-sm;
+  transition: all 0.3s;
+
+  &.radio-checked {
+    border-color: $primary-color;
+    background: rgba($primary-color, 0.05);
+  }
+}
+
+.radio-icon {
+  width: 36px;
+  height: 36px;
+  border: 2px solid $border-color;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .radio-checked & {
+    border-color: $primary-color;
+    background: $primary-color;
+  }
+}
+
+.radio-check {
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.radio-label {
+  font-size: 28px;
+  color: $text-color;
+}
+
 .submit-btn {
   flex: 1;
   height: 96px;
