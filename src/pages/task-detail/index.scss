@@ -1,0 +1,260 @@
+.task-detail {
+  min-height: 100vh;
+  background: $bg-color;
+  padding-bottom: 40px;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 28px;
+  color: $text-color-light;
+}
+
+.detail-header {
+  background: linear-gradient(135deg, $primary-color, #0958d9);
+  padding: 32px 24px;
+  color: #fff;
+}
+
+.status-tag {
+  display: inline-block;
+  padding: 8px 20px;
+  border-radius: $radius-sm;
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+.task-title {
+  font-size: 36px;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.task-meta {
+  font-size: 26px;
+  opacity: 0.9;
+}
+
+.info-section {
+  background: #fff;
+  margin: 24px;
+  padding: 24px;
+  border-radius: $radius-base;
+  box-shadow: $shadow-sm;
+
+  &.delay-info {
+    border-left: 4px solid #722ed1;
+  }
+}
+
+.section-title {
+  font-size: 30px;
+  font-weight: 600;
+  color: $text-color;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid $border-color;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.info-label {
+  font-size: 26px;
+  color: $text-color-secondary;
+}
+
+.info-value {
+  font-size: 26px;
+  color: $text-color;
+  max-width: 60%;
+  text-align: right;
+}
+
+.description-text {
+  font-size: 26px;
+  color: $text-color;
+  line-height: 1.6;
+}
+
+.checkpoint-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+  background: $bg-color;
+  border-radius: $radius-sm;
+  border-left: 4px solid $border-color;
+
+  &.checked {
+    background: rgba($success-color, 0.05);
+    border-left-color: $success-color;
+  }
+}
+
+.checkpoint-index {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: $text-color-light;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 600;
+
+  .checked & {
+    background: $success-color;
+  }
+}
+
+.checkpoint-info {
+  flex: 1;
+}
+
+.checkpoint-name {
+  font-size: 28px;
+  color: $text-color;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.checkpoint-status {
+  font-size: 24px;
+  color: $text-color-light;
+}
+
+.check-icon {
+  font-size: 32px;
+  color: $success-color;
+}
+
+.action-section {
+  padding: 0 24px;
+}
+
+.action-row {
+  margin-bottom: 16px;
+}
+
+.action-btn {
+  width: 100%;
+  height: 88px;
+  line-height: 88px;
+  border-radius: $radius-lg;
+  font-size: 32px;
+  font-weight: 500;
+  border: none;
+
+  &.primary {
+    background: $primary-color;
+    color: #fff;
+  }
+
+  &.outline {
+    background: #fff;
+    color: $primary-color;
+    border: 2px solid $primary-color;
+  }
+
+  &.disabled {
+    background: #ccc;
+    color: #fff;
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.delay-modal {
+  width: 650px;
+  background: #fff;
+  border-radius: $radius-lg;
+  padding: 32px;
+}
+
+.modal-title {
+  font-size: 32px;
+  font-weight: 600;
+  color: $text-color;
+  text-align: center;
+  display: block;
+  margin-bottom: 32px;
+}
+
+.form-item {
+  margin-bottom: 24px;
+}
+
+.form-label {
+  font-size: 28px;
+  color: $text-color;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.picker-value {
+  padding: 20px;
+  border: 1px solid $border-color;
+  border-radius: $radius-sm;
+  font-size: 28px;
+  color: $text-color;
+}
+
+.form-textarea {
+  width: 100%;
+  min-height: 160px;
+  padding: 20px;
+  border: 1px solid $border-color;
+  border-radius: $radius-sm;
+  font-size: 28px;
+  line-height: 1.6;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.modal-btn {
+  flex: 1;
+  height: 80px;
+  line-height: 80px;
+  border-radius: $radius-base;
+  font-size: 28px;
+  border: none;
+
+  &.cancel {
+    background: $bg-color;
+    color: $text-color-secondary;
+  }
+
+  &.confirm {
+    background: $primary-color;
+    color: #fff;
+  }
+}

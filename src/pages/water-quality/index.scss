@@ -1,0 +1,276 @@
+.water-quality-page {
+  min-height: 100vh;
+  background: $bg-color;
+}
+
+.header-card {
+  background: linear-gradient(135deg, #13c2c2, #08979c);
+  padding: 32px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+}
+
+.header-info {
+  .header-title {
+    font-size: 36px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .header-count {
+    font-size: 26px;
+    opacity: 0.8;
+  }
+}
+
+.add-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: none;
+  height: 64px;
+  line-height: 64px;
+  padding: 0 24px;
+  border-radius: $radius-base;
+  font-size: 26px;
+}
+
+.record-list {
+  padding: 24px;
+}
+
+.record-card {
+  background: #fff;
+  border-radius: $radius-base;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: $shadow-sm;
+}
+
+.record-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.record-river {
+  font-size: 32px;
+  font-weight: 600;
+  color: $text-color;
+}
+
+.quality-level {
+  padding: 8px 16px;
+  border-radius: $radius-sm;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.record-location {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.loc-icon {
+  font-size: 24px;
+  margin-right: 8px;
+}
+
+.loc-text {
+  font-size: 26px;
+  color: $text-color-secondary;
+}
+
+.record-indicators {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 16px;
+  background: $bg-color;
+  border-radius: $radius-sm;
+}
+
+.indicator-item {
+  text-align: center;
+}
+
+.ind-label {
+  font-size: 22px;
+  color: $text-color-light;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.ind-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: $primary-color;
+}
+
+.record-status {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.status-item {
+  font-size: 24px;
+  color: $text-color-secondary;
+}
+
+.record-images {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.record-img {
+  width: 180px;
+  height: 130px;
+  border-radius: $radius-sm;
+}
+
+.record-desc {
+  font-size: 26px;
+  color: $text-color-secondary;
+  line-height: 1.5;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.record-footer {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid $border-color;
+}
+
+.record-time, .record-user {
+  font-size: 24px;
+  color: $text-color-light;
+}
+
+.add-form {
+  min-height: 100vh;
+}
+
+.form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px;
+  background: #fff;
+  border-bottom: 1px solid $border-color;
+}
+
+.back-btn {
+  font-size: 28px;
+  color: $primary-color;
+  width: 60px;
+}
+
+.form-title {
+  font-size: 32px;
+  font-weight: 600;
+  color: $text-color;
+}
+
+.form-section {
+  padding: 24px;
+}
+
+.form-item {
+  margin-bottom: 24px;
+
+  &.half {
+    width: 48%;
+  }
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-label {
+  font-size: 28px;
+  color: $text-color;
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.form-input, .picker-value {
+  width: 100%;
+  padding: 20px;
+  border: 1px solid $border-color;
+  border-radius: $radius-sm;
+  font-size: 28px;
+  background: #fff;
+}
+
+.form-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 20px;
+  border: 1px solid $border-color;
+  border-radius: $radius-sm;
+  font-size: 28px;
+  line-height: 1.6;
+  background: #fff;
+}
+
+.image-grid {
+  display: flex;
+  gap: 16px;
+}
+
+.form-img {
+  width: 180px;
+  height: 130px;
+  border-radius: $radius-sm;
+}
+
+.image-add {
+  width: 180px;
+  height: 130px;
+  border: 2px dashed $border-color;
+  border-radius: $radius-sm;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: $bg-color;
+}
+
+.add-icon {
+  font-size: 40px;
+  color: $text-color-light;
+}
+
+.add-text {
+  font-size: 24px;
+  color: $text-color-light;
+  margin-top: 4px;
+}
+
+.form-footer {
+  padding: 24px;
+  padding-bottom: 48px;
+}
+
+.submit-btn {
+  width: 100%;
+  height: 96px;
+  line-height: 96px;
+  background: $primary-color;
+  color: #fff;
+  border: none;
+  border-radius: $radius-lg;
+  font-size: 32px;
+  font-weight: 500;
+}

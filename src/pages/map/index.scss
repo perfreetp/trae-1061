@@ -1,0 +1,207 @@
+.map-page {
+  position: relative;
+  height: 100vh;
+}
+
+.map-container {
+  width: 100%;
+  height: 100vh;
+}
+
+.info-panel {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  right: 24px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: $radius-base;
+  padding: 24px;
+  box-shadow: $shadow-base;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-around;
+}
+
+.info-item {
+  text-align: center;
+}
+
+.info-label {
+  font-size: 24px;
+  color: $text-color-light;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.info-value {
+  font-size: 36px;
+  font-weight: 600;
+  color: $primary-color;
+  display: block;
+}
+
+.action-panel {
+  position: absolute;
+  bottom: 40px;
+  left: 24px;
+  right: 24px;
+}
+
+.action-btn {
+  width: 100%;
+  height: 96px;
+  line-height: 96px;
+  border-radius: $radius-lg;
+  font-size: 32px;
+  font-weight: 500;
+  border: none;
+}
+
+.start-btn {
+  background: $primary-color;
+  color: #fff;
+}
+
+.action-row {
+  display: flex;
+  gap: 16px;
+}
+
+.report-btn {
+  flex: 1;
+  background: $warning-color;
+  color: #fff;
+}
+
+.end-btn {
+  flex: 1;
+  background: $error-color;
+  color: #fff;
+}
+
+.checkpoints-panel {
+  position: absolute;
+  top: 200px;
+  right: 24px;
+  width: 280px;
+  max-height: 400px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: $radius-base;
+  padding: 16px;
+  box-shadow: $shadow-base;
+  overflow-y: auto;
+}
+
+.panel-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: $text-color;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.checkpoint-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: $radius-sm;
+  margin-bottom: 8px;
+  background: $bg-color;
+
+  &.checked {
+    background: rgba($success-color, 0.1);
+  }
+}
+
+.checkpoint-icon {
+  font-size: 28px;
+  margin-right: 12px;
+}
+
+.checkpoint-info {
+  flex: 1;
+}
+
+.checkpoint-name {
+  font-size: 26px;
+  color: $text-color;
+  display: block;
+}
+
+.checkpoint-time {
+  font-size: 22px;
+  color: $text-color-light;
+  display: block;
+  margin-top: 4px;
+}
+
+.checkpoint-nav {
+  font-size: 24px;
+  color: $primary-color;
+  padding: 8px 12px;
+  background: rgba($primary-color, 0.1);
+  border-radius: $radius-sm;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.checkin-modal {
+  width: 600px;
+  background: #fff;
+  border-radius: $radius-lg;
+  padding: 40px;
+  text-align: center;
+}
+
+.modal-title {
+  font-size: 32px;
+  font-weight: 600;
+  color: $text-color;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.modal-name {
+  font-size: 36px;
+  color: $primary-color;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 32px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.modal-btn {
+  flex: 1;
+  height: 80px;
+  line-height: 80px;
+  border-radius: $radius-base;
+  font-size: 28px;
+  border: none;
+
+  &.cancel {
+    background: $bg-color;
+    color: $text-color-secondary;
+  }
+
+  &.confirm {
+    background: $primary-color;
+    color: #fff;
+  }
+}

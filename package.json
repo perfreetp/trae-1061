@@ -1,0 +1,52 @@
+{
+  "name": "river-patrol-app",
+  "version": "1.0.0",
+  "description": "河湖长巡河移动App",
+  "private": true,
+  "templateInfo": {
+    "name": "default",
+    "typescript": true,
+    "css": "sass"
+  },
+  "scripts": {
+    "build:weapp": "taro build --type weapp",
+    "build:alipay": "taro build --type alipay",
+    "dev:weapp": "npm run build:weapp -- --watch",
+    "dev:alipay": "npm run build:alipay -- --watch"
+  },
+  "browserslist": [
+    "last 3 versions",
+    "Android >= 4.1",
+    "ios >= 8"
+  ],
+  "author": "",
+  "dependencies": {
+    "@babel/runtime": "^7.21.5",
+    "@tarojs/components": "3.6.25",
+    "@tarojs/helper": "3.6.25",
+    "@tarojs/plugin-framework-react": "3.6.25",
+    "@tarojs/plugin-platform-alipay": "3.6.25",
+    "@tarojs/plugin-platform-weapp": "3.6.25",
+    "@tarojs/react": "3.6.25",
+    "@tarojs/runtime": "3.6.25",
+    "@tarojs/shared": "3.6.25",
+    "@tarojs/taro": "3.6.25",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "echarts": "^5.4.3",
+    "echarts-for-react": "^3.0.2",
+    "dayjs": "^1.11.10",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.5",
+    "@tarojs/cli": "3.6.25",
+    "@tarojs/webpack5-runner": "3.6.25",
+    "@types/react": "^18.2.0",
+    "@types/uuid": "^9.0.7",
+    "typescript": "^5.1.6",
+    "webpack": "5.78.0",
+    "sass": "^1.62.1",
+    "sass-loader": "^13.2.2"
+  }
+}
